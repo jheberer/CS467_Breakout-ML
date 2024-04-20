@@ -19,6 +19,8 @@ public class Brick : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D other) 
     {
+        // updating remote variable in Ball singleton!
+        Ball.instance.score += 100;
         Destroy(gameObject);
     }
 }

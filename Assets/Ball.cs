@@ -1,21 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+
 
 public class Ball : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // make ball a singleton so we can reference it from other objects like brick
+    public static Ball instance { get; private set; }
     Rigidbody2D ball_rb;
     float initial_speed = 6.0f;
     float min_Y = -6.0f;
     float max_velocity = 12f; 
     bool is_moving = false;
-    // int score = 0;
-    int lives = 5;
-    
-    void Start()
-    {
+    public int score = 0;
+    public int lives = 5;
+    public TextMeshProUGUI score_text;
+    public GameObject[] lives_image;
+    public GameObject game_over_splash;
 
+    // code citation
+    // purpose of code: help make this game object class a singleton, so that
+    // its static variables can be referenced by other game objects
+    // link: https://www.youtube.com/watch?v=yhlyoQ2F-NM
+    // code snippet at time of video: 2:21
+    void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else 
+        {
+            instance = this;
+        }
+        
+    }
+    
+    void GameOver()
+    {
+        Debug.Log("game over");
+        game_over_splash.SetActive(true);
+        Time.timeScale = 0;
     }
 
     // Update is called once per frame
@@ -49,10 +75,18 @@ public class Ball : MonoBehaviour
         // if the ball falls below the screen
         if(transform.position.y < min_Y)
         {
-            transform.position = Vector3.zero;
-            ball_rb.velocity = new Vector3(0, 0, 0);
-            is_moving = false;
-            lives--;
+            if (lives <= 0)
+            {
+                GameOver();
+            }
+            else 
+            {
+                transform.position = Vector3.zero;
+                ball_rb.velocity = new Vector3(0, 0, 0);
+                is_moving = false;
+                lives--;
+                lives_image[lives].SetActive(false);
+            }
         }
         
         if(ball_rb.velocity.magnitude > max_velocity)
@@ -60,7 +94,9 @@ public class Ball : MonoBehaviour
             ball_rb.velocity = Vector3.ClampMagnitude(ball_rb.velocity, max_velocity);
         }
 
-        Debug.Log(ball_rb.velocity.magnitude);
+        // Debug.Log(ball_rb.velocity.magnitude);
+        score_text.text = score.ToString("000000");
+        Debug.Log(score);
     }
 
     
