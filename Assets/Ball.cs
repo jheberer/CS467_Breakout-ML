@@ -99,7 +99,7 @@ public class Ball : MonoBehaviour
         // doesn't get stuck
         if (is_moving && ball_rb.velocity.y == 0.0f)
         {
-            ball_rb.gravityScale = .02f;
+            ball_rb.gravityScale = 0.2f;
         }
         else
         {
