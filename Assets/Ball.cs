@@ -68,6 +68,7 @@ public class Ball : MonoBehaviour
 
                 ball_rb.velocity = initial_velocity;
                 is_moving = true;
+
                 
             }
         }
@@ -94,9 +95,20 @@ public class Ball : MonoBehaviour
             ball_rb.velocity = Vector3.ClampMagnitude(ball_rb.velocity, max_velocity);
         }
 
-        // Debug.Log(ball_rb.velocity.magnitude);
+        // add some gravity when vertical velocity is below a threshold so ball
+        // doesn't get stuck
+        if (is_moving && ball_rb.velocity.y == 0.0f)
+        {
+            ball_rb.gravityScale = .02f;
+        }
+        else
+        {
+            ball_rb.gravityScale = 0f;
+        }
+
+        Debug.Log(ball_rb.velocity.magnitude);
         score_text.text = score.ToString("000000");
-        Debug.Log(score);
+        // Debug.Log(score);
     }
 
     
