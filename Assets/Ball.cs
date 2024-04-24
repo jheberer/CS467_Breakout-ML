@@ -19,13 +19,17 @@ public class Ball : MonoBehaviour
     public TextMeshProUGUI score_text;
     public GameObject[] lives_image;
     public GameObject game_over_splash;
+    public GameObject victory_splash;
+    public bool game_over = false;
     float previous_velocity_y = 0f;
+    public int brick_count;
 
     // for audio
     public AudioSource paddle_sound;
     public AudioSource brick_sound;
     public AudioSource life_lost_sound;
     public AudioSource game_over_sound;
+    public AudioSource victory_sound;
 
 
     void GameOver()
@@ -33,6 +37,16 @@ public class Ball : MonoBehaviour
         Debug.Log("game over");
         game_over_sound.Play();
         game_over_splash.SetActive(true);
+        game_over = true;
+        Time.timeScale = 0;
+    }
+
+    void Victory()
+    {
+        Debug.Log("victory");
+        victory_sound.Play();
+        victory_splash.SetActive(true);
+        game_over = true;
         Time.timeScale = 0;
     }
 
@@ -53,13 +67,24 @@ public class Ball : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        GameObject[] bricks = GameObject.FindGameObjectsWithTag("Brick");
+        brick_count = bricks.Length;
+    }
+
     // Update is called once per frame
     void Update()
     {
         // this references the rigid body component of this ball
         ball_rb = GetComponent<Rigidbody2D>();
 
-       
+        // win
+        if (brick_count == 0 && !game_over)
+        {
+            Victory();
+        }
+
         if (!is_moving) 
         {
             // this puts the ball "in-play", and is only available when ball is
@@ -97,6 +122,8 @@ public class Ball : MonoBehaviour
             //     // Apply the modified velocity to the Rigidbody
             //     ball_rb.velocity = current_velocity;
             // }
+
+            
 
             // if the ball falls below the screen
             if(transform.position.y < min_Y)

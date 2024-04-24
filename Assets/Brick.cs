@@ -23,6 +23,7 @@ public class Brick : MonoBehaviour
     {
         // updating remote variable in Ball singleton!
         Ball.instance.score += row_number;
+        Ball.instance.brick_count -= 1;
         Destroy(gameObject);
     }
 }
