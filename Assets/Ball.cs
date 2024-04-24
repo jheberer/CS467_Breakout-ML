@@ -12,69 +12,28 @@ public class Ball : MonoBehaviour
     float initial_speed = 6.0f;
     float min_Y = -6.0f;
     float max_velocity = 11f; 
+    public float min_vertical_speed = 1f;
     bool is_moving = false;
     public int score = 0;
     public int lives = 5;
     public TextMeshProUGUI score_text;
     public GameObject[] lives_image;
     public GameObject game_over_splash;
+    float previous_velocity_y = 0f;
 
     // for audio
     public AudioSource paddle_sound;
     public AudioSource brick_sound;
+    public AudioSource life_lost_sound;
+    public AudioSource game_over_sound;
 
 
-    // for detecting whether the ball is "stuck"
-    public float horizontal_threshold = 0.1f; // Threshold for considering horizontal movement
-    public float force_magnitude = 1f; // Magnitude of the force to apply
-    public float delay_duration = 1f; // Duration to wait before applying force
-    private float horizontal_duration = 0f;
-    private float previous_vertical_velocity = 0f;
-    private float current_vertical_velocity = 0f;
-    private Coroutine force_routine;
-
-    void CheckHorizontalMovement()
+    void GameOver()
     {
-        // Check if the object is moving horizontally
-        if (Mathf.Abs(ball_rb.velocity.y) < horizontal_threshold)
-        {
-            if (horizontal_duration == 0)
-            {
-                previous_vertical_velocity = current_vertical_velocity;
-            }
-            // Increment the horizontal duration
-            horizontal_duration += Time.deltaTime;
-            
-
-            // If the object just started moving horizontally, start the coroutine
-            if (horizontal_duration >= delay_duration && force_routine == null)
-            {
-                force_routine = StartCoroutine(Applyforce_routine());
-            }
-        }
-        else
-        {
-            // Reset the horizontal duration if the object's vertical velocity changes
-            horizontal_duration = 0f;
-            if (force_routine != null)
-            {
-                StopCoroutine(force_routine);
-                force_routine = null;
-            }
-        }
-    }
-
-    IEnumerator Applyforce_routine()
-    {
-        // Wait for the specified delay duration
-        yield return new WaitForSeconds(delay_duration);
-
-        // Apply force in the direction of the previous vertical velocity
-        Vector2 forceDirection = previous_vertical_velocity > 0 ? Vector2.up : Vector2.down;
-        ball_rb.AddForce(forceDirection * force_magnitude, ForceMode2D.Impulse);
-
-        // Reset the coroutine reference
-        force_routine = null;
+        Debug.Log("game over");
+        game_over_sound.Play();
+        game_over_splash.SetActive(true);
+        Time.timeScale = 0;
     }
 
     // code citation
@@ -92,19 +51,6 @@ public class Ball : MonoBehaviour
         {
             instance = this;
         }
-        
-    }
-
-    void Start()
-    {
-        // paddle_sound = GetComponent<AudioSource>();
-    }
-    
-    void GameOver()
-    {
-        Debug.Log("game over");
-        game_over_splash.SetActive(true);
-        Time.timeScale = 0;
     }
 
     // Update is called once per frame
@@ -116,6 +62,8 @@ public class Ball : MonoBehaviour
        
         if (!is_moving) 
         {
+            // this puts the ball "in-play", and is only available when ball is
+            // in the starting position
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 // transform.translate will only apply discrete movements when
@@ -131,66 +79,67 @@ public class Ball : MonoBehaviour
 
                 ball_rb.velocity = initial_velocity;
                 is_moving = true;
-
-                
             }
         }
 
-        // this is a test key for testing various behaviors
-        if (is_moving)
+        // if ball is moving or "in play"
+        else
         {
-            if (Input.GetKeyDown(KeyCode.T)) 
+            // this is a test key for testing various behaviors
+            // if (Input.GetKeyDown(KeyCode.T)) 
+            // {
+            //     // Get the current velocity
+            //     Vector3 current_velocity = ball_rb.velocity;
+
+            //     // Set the vertical component of the velocity to 0
+            //     current_velocity.y = 0f;
+
+            //     // Apply the modified velocity to the Rigidbody
+            //     ball_rb.velocity = current_velocity;
+            // }
+
+            // if the ball falls below the screen
+            if(transform.position.y < min_Y)
             {
-                // Get the current velocity
-                Vector3 current_velocity = ball_rb.velocity;
+                if (lives <= 0)
+                {
+                    GameOver();
+                }
 
-                // Set the vertical component of the velocity to 0
-                current_velocity.y = 0f;
-
-                // Apply the modified velocity to the Rigidbody
-                ball_rb.velocity = current_velocity;
+                else 
+                {
+                    transform.position = Vector3.zero;
+                    ball_rb.velocity = new Vector3(0, 0, 0);
+                    is_moving = false;
+                    lives--;
+                    lives_image[lives].SetActive(false);
+                    life_lost_sound.Play();
+                }
             }
-        }
 
-        // if the ball falls below the screen
-        if(transform.position.y < min_Y)
-        {
-            if (lives <= 0)
+            // cap max speed so game doesn't become too hard
+            if(ball_rb.velocity.magnitude > max_velocity)
             {
-                GameOver();
+                ball_rb.velocity = Vector3.ClampMagnitude(ball_rb.velocity, max_velocity);
             }
-            else 
+
+            // add minimum vertical speed (absolute) so ball doesn't become "stuck"
+            // DEV note: Even though it violates DRY, I needed to repeat the is_moving
+            // check here to avoid issues on restart. Needs further investigation
+            if (Mathf.Abs(ball_rb.velocity.y) < min_vertical_speed && is_moving)
             {
-                transform.position = Vector3.zero;
-                ball_rb.velocity = new Vector3(0, 0, 0);
-                is_moving = false;
-                lives--;
-                lives_image[lives].SetActive(false);
+                Debug.Log("Apply minimum vertical force");
+                float vertical_force = min_vertical_speed - Mathf.Abs(ball_rb.velocity.y);
+                // us direction prior to ball becoming "stuck"
+                Vector2 vertical_force_direction = Vector2.up * Mathf.Sign(previous_velocity_y);
+                ball_rb.AddForce(vertical_force_direction * vertical_force, ForceMode2D.Impulse);
             }
-        }
-        
-        if(ball_rb.velocity.magnitude > max_velocity)
-        {
-            ball_rb.velocity = Vector3.ClampMagnitude(ball_rb.velocity, max_velocity);
-        }
-
-
-        // add some gravity when vertical velocity is below a threshold so ball
-        // doesn't get stuck
-        // if (is_moving && ball_rb.velocity.y == 0.0f)
-        // {
-        //     ball_rb.AddForce(Vector2.up * 6f, ForceMode2D.Impulse);
-        // }
-        if (is_moving)
-        {
-            CheckHorizontalMovement();
-        }
+        } 
 
         // Debug.Log(ball_rb.velocity.magnitude);
         score_text.text = score.ToString("000000");
 
-        current_vertical_velocity = ball_rb.velocity.y;
-        // Debug.Log(score);
+        previous_velocity_y = ball_rb.velocity.y;
     }
 
     void OnCollisionEnter2D(Collision2D other)

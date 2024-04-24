@@ -424,6 +424,8 @@ MonoBehaviour:
   game_over_splash: {fileID: 110845642}
   paddle_sound: {fileID: 1009185481}
   brick_sound: {fileID: 1477127774}
+  life_lost_sound: {fileID: 1618128358}
+  game_over_sound: {fileID: 1618128358}
   horizontal_threshold: 0.1
   force_magnitude: 1
   delay_duration: 1
