@@ -5,6 +5,7 @@ using UnityEngine;
 public class Row : MonoBehaviour
 {
     // Start is called before the first frame update
+    public int row_number;
     void Start()
     {
         SpriteRenderer[] brick_renderers = GetComponentsInChildren<SpriteRenderer>();
