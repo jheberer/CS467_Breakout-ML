@@ -77,8 +77,11 @@ public class Ball : MonoBehaviour
         // this references the rigid body component of this ball
         ball_rb = GetComponent<Rigidbody2D>();
 
+        if (game_over) {
+            return;
+        }
         // win
-        if (brick_count == 0 && !game_over)
+        if (brick_count == 0)
         {
             Victory();
         }
