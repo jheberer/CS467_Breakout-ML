@@ -40,7 +40,6 @@ public class Ball : MonoBehaviour
         game_over = true;
         Time.timeScale = 0;
     }
-
     void Victory()
     {
         Debug.Log("victory");
@@ -66,7 +65,6 @@ public class Ball : MonoBehaviour
             instance = this;
         }
     }
-
     void Start()
     {
         GameObject[] bricks = GameObject.FindGameObjectsWithTag("Brick");
@@ -179,6 +177,10 @@ public class Ball : MonoBehaviour
         {
             brick_sound.Play();
         }
+    }
+
+    public void ResetIsMoving() {
+        is_moving = false;
     }
 
     
