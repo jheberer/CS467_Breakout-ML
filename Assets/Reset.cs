@@ -10,10 +10,14 @@ public class Reset: MonoBehaviour {
     }
 
     public void Quit(){
-        /*if build
-        Application.Quit();*/
+        Debug.Log("quit game");
+        Application.Quit();
 
         //if editor
-        UnityEditor.EditorApplication.isPlaying = false;
+        // UnityEditor.EditorApplication.isPlaying = false;
+    }
+
+    public void ReturnToMenu(string scene_name) {
+        SceneManager.LoadScene(scene_name);
     }
 }
