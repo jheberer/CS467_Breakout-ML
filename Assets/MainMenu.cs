@@ -8,7 +8,10 @@ public class MainMenu : MonoBehaviour
     public void SinglePlayer(string scene_name)
     {
         Time.timeScale = 1;
-        Ball.instance.ResetIsMoving();
+        if (Ball.instance != null)
+        {
+            Ball.instance.ResetIsMoving();
+        }
         SceneManager.LoadScene(scene_name);
     }
 
