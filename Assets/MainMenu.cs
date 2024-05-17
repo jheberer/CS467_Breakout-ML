@@ -20,4 +20,12 @@ public class MainMenu : MonoBehaviour
         Debug.Log("game quit");
         Application.Quit();
     }
+
+    public void TwoPlayer()
+    {
+        Time.timeScale = 1;
+        Ball.instance.ResetIsMoving();
+        SceneManager.LoadScene("2PModeScene");
+    }
+
 }
