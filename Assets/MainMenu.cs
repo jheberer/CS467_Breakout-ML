@@ -5,11 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public void SinglePlayer()
+    public void SinglePlayer(string scene_name)
     {
         Time.timeScale = 1;
-        Ball.instance.ResetIsMoving();
-        SceneManager.LoadScene("SampleScene");
+        if (Ball.instance != null)
+        {
+            Ball.instance.ResetIsMoving();
+        }
+        SceneManager.LoadScene(scene_name);
     }
 
     public void QuitGame()
