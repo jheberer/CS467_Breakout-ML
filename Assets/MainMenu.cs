@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public void SinglePlayer(string scene_name)
+    public void SinglePlayer()
     {
         Time.timeScale = 1;
         Ball.instance.ResetIsMoving();
-        SceneManager.LoadScene(scene_name);
+        SceneManager.LoadScene("SampleScene");
     }
 
     public void QuitGame()
@@ -17,4 +17,12 @@ public class MainMenu : MonoBehaviour
         Debug.Log("game quit");
         Application.Quit();
     }
+
+    public void TwoPlayer()
+    {
+        Time.timeScale = 1;
+        Ball.instance.ResetIsMoving();
+        SceneManager.LoadScene("2PModeScene");
+    }
+
 }
