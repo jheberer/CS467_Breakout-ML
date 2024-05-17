@@ -24,7 +24,10 @@ public class MainMenu : MonoBehaviour
     public void TwoPlayer()
     {
         Time.timeScale = 1;
-        Ball.instance.ResetIsMoving();
+        if (Ball.instance != null)
+        {
+            Ball.instance.ResetIsMoving();
+        }
         SceneManager.LoadScene("2PModeScene");
     }
 
