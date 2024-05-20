@@ -11,7 +11,14 @@ public class Ball : MonoBehaviour
     Rigidbody2D ball_rb;
     float initial_speed = 6.0f;
     float min_Y = -6.0f;
-    float max_velocity = 11f; 
+    float max_velocity = 11f;
+    // *===========================CHANGES-JP==========================================*
+    // made is_moving to a public variable
+    // createdd public bool variable gameStart and gameStop
+    public bool isGameStart = true;
+    public bool game_won = false;
+
+
     public float min_vertical_speed = 1f;
     bool is_moving = false;
     public int score = 0;
@@ -21,6 +28,7 @@ public class Ball : MonoBehaviour
     public GameObject game_over_splash;
     public GameObject victory_splash;
     public bool game_over = false;
+
     float previous_velocity_y = 0f;
     public int brick_count;
 
@@ -40,12 +48,12 @@ public class Ball : MonoBehaviour
         game_over = true;
         Time.timeScale = 0;
     }
-
     void Victory()
     {
         Debug.Log("victory");
         victory_sound.Play();
         victory_splash.SetActive(true);
+        game_won = true;
         game_over = true;
         Time.timeScale = 0;
     }
@@ -61,12 +69,11 @@ public class Ball : MonoBehaviour
         {
             Destroy(this);
         }
-        else 
+        else
         {
             instance = this;
         }
     }
-
     void Start()
     {
         GameObject[] bricks = GameObject.FindGameObjectsWithTag("Brick");
@@ -79,13 +86,17 @@ public class Ball : MonoBehaviour
         // this references the rigid body component of this ball
         ball_rb = GetComponent<Rigidbody2D>();
 
+        if (game_over)
+        {
+            return;
+        }
         // win
-        if (brick_count == 0 && !game_over)
+        if (brick_count == 0)
         {
             Victory();
         }
 
-        if (!is_moving) 
+        if (!is_moving)
         {
             // this puts the ball "in-play", and is only available when ball is
             // in the starting position
@@ -123,17 +134,17 @@ public class Ball : MonoBehaviour
             //     ball_rb.velocity = current_velocity;
             // }
 
-            
+
 
             // if the ball falls below the screen
-            if(transform.position.y < min_Y)
+            if (transform.position.y < min_Y)
             {
                 if (lives <= 0)
                 {
                     GameOver();
                 }
 
-                else 
+                else
                 {
                     transform.position = Vector3.zero;
                     ball_rb.velocity = new Vector3(0, 0, 0);
@@ -145,7 +156,7 @@ public class Ball : MonoBehaviour
             }
 
             // cap max speed so game doesn't become too hard
-            if(ball_rb.velocity.magnitude > max_velocity)
+            if (ball_rb.velocity.magnitude > max_velocity)
             {
                 ball_rb.velocity = Vector3.ClampMagnitude(ball_rb.velocity, max_velocity);
             }
@@ -161,7 +172,7 @@ public class Ball : MonoBehaviour
                 Vector2 vertical_force_direction = Vector2.up * Mathf.Sign(previous_velocity_y);
                 ball_rb.AddForce(vertical_force_direction * vertical_force, ForceMode2D.Impulse);
             }
-        } 
+        }
 
         // Debug.Log(ball_rb.velocity.magnitude);
         score_text.text = score.ToString("000000");
@@ -181,5 +192,10 @@ public class Ball : MonoBehaviour
         }
     }
 
-    
+    public void ResetIsMoving()
+    {
+        is_moving = false;
+    }
+
+
 }
