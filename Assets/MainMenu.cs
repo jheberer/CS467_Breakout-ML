@@ -28,6 +28,11 @@ public class MainMenu : MonoBehaviour
         {
             Ball.instance.ResetIsMoving();
         }
+
+        if (AgentBall.agentInstance != null)
+        {
+            AgentBall.agentInstance.ResetIsMoving();
+        }
         SceneManager.LoadScene("2PModeScene");
     }
 
