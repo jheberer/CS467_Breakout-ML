@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
 // *===========================CHANGES-JP- OUTSIDE OF THE CODE==========================================*
 // on the unity editor installed MLagents package
 
@@ -18,29 +16,16 @@ using UnityEngine;
 
 // added isGamestart in the ball.script.
 // checked for is game start to set when to get rewards
-
-
-
-
-
-
-
-
 // *===========================CHANGES-JP==========================================*
 //  added packages =========>>>>>>>namespace unity.mlagents, using Unity.MLAgents , using Unity.MLAgents.Actuators,
 // using Unity.MLAgents.Sensors, new namespace unity.mlagents
-
-
-
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using Unity.VisualScripting;
 using UnityEngine.SocialPlatforms.Impl;
+using Unity.Mathematics;
 // *===========================CHANGES-JP==========================================*
-
-
-
 // *===========================CHANGES-JP==========================================*
 // From public class Paddle : MonoBehaviour ============>>>>>> public class Paddle : Agent
 // public class Paddle : MonoBehaviour
@@ -49,9 +34,6 @@ public class Paddle : Agent
 {
     // serializing move_speed in case we want power-ups or something later
     [SerializeField] float move_speed = 7.0f;
-
-
-
     // *===========================CHANGES-JP==========================================*
     // added transform to locate ball
     // added a global speed_amount variable
@@ -62,14 +44,28 @@ public class Paddle : Agent
     GameObject temp;
     bool isInPlay = false;
     int lives = 0;
-
     int numOfHits = 0;
+    float paddle_position_x = 0;
+    float ball_position_x = 0;
+    float paddle_position_y = 0;
+    float ball_position_y = 0;
+    float outermin = -2f;
+    float outermax = 2f;
+    // *===========================CHANGES-JP==========================================*
+    // gets the ball position and the number of lives and ball velocity for the MLagent
+    // under onActionReceived
+    // reward 15 if game is won, 
+    // reward .5 if getting near ball and 1 if really close
+    // reward -1 if lost ball and -2 if lost ball with no a single hit
+    // under collectObservations
+    // now collecting the balls velocity so update on inspector for paddle the vector observation under 
+    // behavior parameter from 6 to 8
+    // under collisions, set formula to reward agent based on the amount of hits made
     public override void Initialize()
     {
         temp = GameObject.Find("Ball");
         lives = temp.GetComponent<Ball>().lives;
     }
-    // *===========================CHANGES-JP==========================================*
     public override void OnActionReceived(ActionBuffers actions)
     {
         if (temp.GetComponent<Ball>().game_won)
@@ -83,28 +79,10 @@ public class Paddle : Agent
         else
         {
             isInPlay = temp.GetComponent<Ball>().isGameStart;
-            // if(temp.GetComponent<Score>())
-            // Debug.Log(temp.GetComponent<Ball>().is_moving);
-            // Component balltemp = temp.GetComponent<Ball>();
-            // Debug.Log(balltemp.Is_moving);
         }
-        // bool hasGameBegan = true;
-        // if (!isInPlay && lives >= 5)
-        // {
-        //     hasGameBegan = false;
-        // }
-        // else
-        // {
-        //     hasGameBegan = true;
-        // }
-        // Debug.Log("inside the onactionreeived");
-        // float moveX = actions.ContinuousActions[0];// * Time.deltaTime * move_speed; //testing
         float min_x = -7.64f;
         float max_x = 7.64f;
         float speed_amount = actions.ContinuousActions[0] * move_speed * Time.deltaTime;
-
-        // Debug.Log(transform.position);
-
         if (transform.position.x <= min_x && speed_amount < 0)
         {
             speed_amount = 0;
@@ -114,11 +92,27 @@ public class Paddle : Agent
         {
             speed_amount = 0;
         }
-
-
-        // Debug.Log(temp.GetComponent<is_moving>);
-        // Debug.Log(temp.GetComponent<bool>());
         transform.Translate(speed_amount, 0, 0);
+        paddle_position_x = transform.position.x;
+        paddle_position_y = transform.position.y;
+        ball_position_x = temp.GetComponent<Ball>().x_position;
+        ball_position_y = temp.GetComponent<Ball>().y_position;
+        if (isInPlay && temp.GetComponent<Ball>().is_moving)
+        {
+            if (ball_position_y < -3.75)
+            {
+                if (math.abs(paddle_position_x - ball_position_x) < 1)
+                {
+                    Debug.Log("getting reward for chasing ball with more precise");
+                    AddReward(+1f);
+                }
+                if (math.abs(paddle_position_x - ball_position_x) < 2)
+                {
+                    Debug.Log("getting reward for chasing ball");
+                    AddReward(+0.5f);
+                }
+            }
+        }
         if (!isInPlay)
         {
             if (lives != temp.GetComponent<Ball>().lives)
@@ -126,8 +120,7 @@ public class Paddle : Agent
                 if (numOfHits == 0)
                 {
                     Debug.Log("+++++++++++++++++++++++++LOST NO HITS+++++++++++++++++++++++++\t\t\t\t\t-1");
-
-                    AddReward(-1f);
+                    AddReward(-2f);
                     numOfHits = 0;
                     lives = lives - 1;
                     EndEpisode();
@@ -135,142 +128,38 @@ public class Paddle : Agent
                 else
                 {
                     Debug.Log("+++++++++++++++++++++++++LOST, ATLEAST 1 HIT+++++++++++++++++++++++++\t\t\t\t\t-1");
-
-                    // Debug.Log("+++++++++++++++++++++++++loss reward+++++++++++++++++++++++++");
-                    // Debug.Log(ballTransform.position);
                     AddReward(-1f);
                     numOfHits = 0;
-                    // Debug.Log("+++++++++++++++++++++++++end epsisode after loss+++++++++++++++++++++++++");
                     lives = lives - 1;
                     EndEpisode();
                 }
             }
         }
-
-
-        // transform.position += new Vector3(moveX, 0, 0) * Time.deltaTime * move_speed;
-        // Debug.Log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++paddle position after change : " + transform.position.x);
         speed_amount = 0;
     }
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(transform.position);
         sensor.AddObservation(ballTransform.position);
-        // Debug.Log("inside collectObservations");
-        // Debug.Log(transform.position);
-
+        sensor.AddObservation(ballTransform.GetComponent<Rigidbody2D>().velocity);
     }
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-
         ActionSegment<float> continousActions = actionsOut.ContinuousActions;
         continousActions[0] = Input.GetAxisRaw("Horizontal");
     }
-
     private void OnCollisionEnter2D(Collision2D other)
     {
-        // Debug.Log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++paddle position on collision : " + transform.position.x);
-
-        // Debug.Log("+++++++++++++++++++++++++inside the oncollisionfunc+++++++++++++++++++++++++");
-
-        // Debug.Log(other.gameObject.name);
         if (other.gameObject.CompareTag("Ball"))
         {
-
-            numOfHits = numOfHits + 1;
-            if (numOfHits > 1)
-            {
-                Debug.Log("+++++++++++++++++++++++++reward HIT=1+++++++++++++++++++++++++\t\t\t\t\t5");
-                // AddReward(+.5f);
-                // if (numOfHits > 2)
-                // {
-                AddReward(+1f);
-                // }
-                // Debug.Log("+++++++++++++++++++++++++end epsisode+++++++++++++++++++++++++");
-                // EndEpisode();
-            }
-            if (numOfHits > 2)
-            {
-                // Debug.Log("+++++++++++++++++++++++++reward HIT=2+++++++++++++++++++++++++\t\t\t\t\t4");
-                // AddReward(+.5f);
-                // if (numOfHits > 2)
-                // {
-                AddReward(+1f);
-                // }
-                // Debug.Log("+++++++++++++++++++++++++end epsisode+++++++++++++++++++++++++");
-                // EndEpisode();
-            }
-            if (numOfHits > 3)
-            {
-                // Debug.Log("+++++++++++++++++++++++++reward HIT=3+++++++++++++++++++++++++\t\t\t\t\t2");
-                // AddReward(+.5f);
-                // if (numOfHits > 2)
-                // {
-                AddReward(+1f);
-                // }
-                // Debug.Log("+++++++++++++++++++++++++end epsisode+++++++++++++++++++++++++");
-                // EndEpisode();
-            }
-            if (numOfHits > 4)
-            {
-                // Debug.Log("+++++++++++++++++++++++++reward HIT=4+++++++++++++++++++++++++\t\t\t\t\t2");
-                // AddReward(+.5f);
-                // if (numOfHits > 2)
-                // {
-                AddReward(+1f);
-                // }
-                // Debug.Log("+++++++++++++++++++++++++end epsisode+++++++++++++++++++++++++");
-                // EndEpisode();
-            }
-            if (numOfHits > 5)
-            {
-                Debug.Log("+++++++++++++++++++++++++reward HIT=5+++++++++++++++++++++++++\t\t\t\t\t2");
-                // AddReward(+.5f);
-                // if (numOfHits > 2)
-                // {
-                AddReward(+1f);
-                // }
-                // Debug.Log("+++++++++++++++++++++++++end epsisode+++++++++++++++++++++++++");
-                // EndEpisode();
-            }
+            float accumulativeReward = (numOfHits * .05f) + 1;
+            AddReward(accumulativeReward);
+            numOfHits = +1;
+            // if ((paddle_position_x < outermin) || paddle_position_x > outermax)
+            // {
+            //     Debug.Log("+++++++++++++++++++++++++Going beyond boundaries+++++++++++++++++++++++++\t\t\t\t\t5");
+            //     AddReward(+1f);
+            // }
         }
-        // else if (other.gameObject.CompareTag("Paddle"))
-        // {
-        //     Debug.Log("+++++++++++++++++++++++++hit the ball");
-        // }
-
     }
-    // *===========================CHANGES-JP==========================================*
-
-
-
-
-
-
-
-
-    // void Start()
-    // {
-    // }
-
-    // Update is called once per frame
-    // void Update()
-    // {
-    //     float min_x = -7.64f;
-    //     float max_x = 7.64f;
-    //     float speed_amount = Input.GetAxis("Horizontal") * move_speed * Time.deltaTime;
-
-    //     if (transform.position.x <= min_x && speed_amount < 0)
-    //     {
-    //         speed_amount = 0;
-    //     }
-
-    //     if (transform.position.x >= max_x && speed_amount > 0)
-    //     {
-    //         speed_amount = 0;
-    //     }
-
-    //     transform.Translate(speed_amount, 0, 0);
-    // }
-
 }
