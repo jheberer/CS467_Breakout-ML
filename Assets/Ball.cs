@@ -11,9 +11,17 @@ public class Ball : MonoBehaviour
     Rigidbody2D ball_rb;
     float initial_speed = 6.0f;
     float min_Y = -6.0f;
-    float max_velocity = 11f; 
+    float max_velocity = 11f;
+    // *===========================CHANGES-JP==========================================*
+    // made is_moving to a public variable
+    // createdd public bool variable gameStart and gameStop
+    public bool isGameStart = false;
+    public bool game_won = false;
+    public float x_position = 0;
+    public float y_position = 0;
+    public int bricksHit = 0;
     public float min_vertical_speed = 1f;
-    bool is_moving = false;
+    public bool is_moving = false;
     public int score = 0;
     public int lives = 5;
     public TextMeshProUGUI score_text;
@@ -45,6 +53,7 @@ public class Ball : MonoBehaviour
         Debug.Log("victory");
         victory_sound.Play();
         victory_splash.SetActive(true);
+        game_won = true;
         game_over = true;
         Time.timeScale = 0;
     }
@@ -60,7 +69,7 @@ public class Ball : MonoBehaviour
         {
             Destroy(this);
         }
-        else 
+        else
         {
             instance = this;
         }
@@ -74,10 +83,13 @@ public class Ball : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        x_position = transform.position.x;
+        y_position = transform.position.y;
         // this references the rigid body component of this ball
         ball_rb = GetComponent<Rigidbody2D>();
 
-        if (game_over) {
+        if (game_over)
+        {
             return;
         }
         // win
@@ -86,12 +98,13 @@ public class Ball : MonoBehaviour
             Victory();
         }
 
-        if (!is_moving) 
+        if (!is_moving)
         {
             // this puts the ball "in-play", and is only available when ball is
             // in the starting position
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                isGameStart = true;
                 // transform.translate will only apply discrete movements when
                 // space is held. Need a vector instead
                 // give it a little lateral movement so game start is interesting
@@ -124,18 +137,20 @@ public class Ball : MonoBehaviour
             //     ball_rb.velocity = current_velocity;
             // }
 
-            
+
 
             // if the ball falls below the screen
-            if(transform.position.y < min_Y)
+            if (transform.position.y < min_Y)
             {
+                isGameStart = false;
                 if (lives <= 0)
                 {
                     GameOver();
                 }
 
-                else 
+                else
                 {
+                    isGameStart = false;
                     transform.position = Vector3.zero;
                     ball_rb.velocity = new Vector3(0, 0, 0);
                     is_moving = false;
@@ -146,7 +161,7 @@ public class Ball : MonoBehaviour
             }
 
             // cap max speed so game doesn't become too hard
-            if(ball_rb.velocity.magnitude > max_velocity)
+            if (ball_rb.velocity.magnitude > max_velocity)
             {
                 ball_rb.velocity = Vector3.ClampMagnitude(ball_rb.velocity, max_velocity);
             }
@@ -162,7 +177,7 @@ public class Ball : MonoBehaviour
                 Vector2 vertical_force_direction = Vector2.up * Mathf.Sign(previous_velocity_y);
                 ball_rb.AddForce(vertical_force_direction * vertical_force, ForceMode2D.Impulse);
             }
-        } 
+        }
 
         // Debug.Log(ball_rb.velocity.magnitude);
         score_text.text = score.ToString("000000");
@@ -178,13 +193,15 @@ public class Ball : MonoBehaviour
         }
         if (other.gameObject.CompareTag("Brick"))
         {
+            bricksHit = bricksHit + 1;
             brick_sound.Play();
         }
     }
 
-    public void ResetIsMoving() {
+    public void ResetIsMoving()
+    {
         is_moving = false;
     }
 
-    
+
 }
