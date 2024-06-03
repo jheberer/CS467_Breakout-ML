@@ -20,6 +20,12 @@ public class Ball : MonoBehaviour
     public GameObject[] lives_image;
     public GameObject game_over_splash;
     public GameObject victory_splash;
+
+    public GameObject ai_outperform_splash;
+
+    public GameObject player_outperform_splash;
+
+    public GameObject tie_splash;
     public bool game_over = false;
     float previous_velocity_y = 0f;
     public int brick_count;
@@ -35,9 +41,33 @@ public class Ball : MonoBehaviour
     void GameOver()
     {
         Debug.Log("game over");
-        game_over_sound.Play();
-        game_over_splash.SetActive(true);
+        //game_over_sound.Play();
         game_over = true;
+
+         AgentBall agentBall = AgentBall.agentInstance;
+
+        if (agentBall != null)
+        {
+            if (score > agentBall.agent_score)
+            {
+                player_outperform_splash.SetActive(true);
+                victory_sound.Play();
+            }
+            else if (score < agentBall.agent_score)
+            {
+                ai_outperform_splash.SetActive(true);
+                game_over_sound.Play();
+            }
+            else
+            {
+                tie_splash.SetActive(true);
+            }
+        }
+        else
+        {
+            game_over_splash.SetActive(true);
+        }
+
         Time.timeScale = 0;
     }
     void Victory()
@@ -81,10 +111,10 @@ public class Ball : MonoBehaviour
             return;
         }
         // win
-        if (brick_count == 0)
+        /*if (brick_count == 0)
         {
             Victory();
-        }
+        }*/
 
         if (!is_moving) 
         {

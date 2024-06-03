@@ -12,7 +12,7 @@ public class AgentBall : MonoBehaviour
     private float min_Y = -6.0f;
     private float max_velocity = 11f; 
     public float min_vertical_speed = 1f;
-    private bool is_moving = false;
+    public bool is_moving = false;
 
     public int agent_lives = 5;
     public int agent_score = 0;
@@ -23,6 +23,7 @@ public class AgentBall : MonoBehaviour
     public bool game_over = false;
     private float previous_velocity_y = 0f;
     public int agent_brick_count;
+
 
     void Awake()
     {
@@ -126,5 +127,5 @@ public class AgentBall : MonoBehaviour
         agent_ball_rb.velocity = initial_velocity;
         is_moving = true;
         Debug.Log("Ball movement started.");
-    } 
+    }
 }
