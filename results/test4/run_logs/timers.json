@@ -1,0 +1,54 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1716840201",
+        "python_version": "3.9.7 (default, Sep 16 2021, 08:50:36) \n[Clang 10.0.0 ]",
+        "command_line_arguments": "/Users/jesusponce/miniconda3/bin/mlagents-learn --run-id=test4 --resume --debug",
+        "mlagents_version": "0.30.0",
+        "mlagents_envs_version": "0.30.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "1.11.0",
+        "numpy_version": "1.21.2",
+        "end_time_seconds": "1716840210"
+    },
+    "total": 9.247390333,
+    "count": 1,
+    "self": 0.018594374999999275,
+    "children": {
+        "run_training.setup": {
+            "total": 0.036483875000000054,
+            "count": 1,
+            "self": 0.036483875000000054
+        },
+        "TrainerController.start_learning": {
+            "total": 9.192312083000001,
+            "count": 1,
+            "self": 5.533200000051863e-05,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 9.109972875,
+                    "count": 1,
+                    "self": 9.109972875
+                },
+                "trainer_threads": {
+                    "total": 5.84000000358742e-07,
+                    "count": 1,
+                    "self": 5.84000000358742e-07
+                },
+                "TrainerController._save_models": {
+                    "total": 0.08228329199999962,
+                    "count": 1,
+                    "self": 0.00038924999999956356,
+                    "children": {
+                        "RLTrainer._checkpoint": {
+                            "total": 0.08189404200000006,
+                            "count": 1,
+                            "self": 0.08189404200000006
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

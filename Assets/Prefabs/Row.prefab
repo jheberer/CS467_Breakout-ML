@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c90784891c56d934d9b196e3b211169a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  row_number: 0
 --- !u!1001 &6539907355399282317
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -511,6 +512,22 @@ PrefabInstance:
     - target: {fileID: 2354318310338334758, guid: 319aa32f92db578438841611d21e2e20, type: 3}
       propertyPath: m_Name
       value: Brick (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2354318310338334759, guid: 319aa32f92db578438841611d21e2e20, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2354318310338334759, guid: 319aa32f92db578438841611d21e2e20, type: 3}
+      propertyPath: m_Color.b
+      value: 0.6745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 2354318310338334759, guid: 319aa32f92db578438841611d21e2e20, type: 3}
+      propertyPath: m_Color.g
+      value: 0.99607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 2354318310338334759, guid: 319aa32f92db578438841611d21e2e20, type: 3}
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 319aa32f92db578438841611d21e2e20, type: 3}

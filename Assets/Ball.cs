@@ -15,12 +15,13 @@ public class Ball : MonoBehaviour
     // *===========================CHANGES-JP==========================================*
     // made is_moving to a public variable
     // createdd public bool variable gameStart and gameStop
-    public bool isGameStart = true;
+    public bool isGameStart = false;
     public bool game_won = false;
-
-
+    public float x_position = 0;
+    public float y_position = 0;
+    public int bricksHit = 0;
     public float min_vertical_speed = 1f;
-    bool is_moving = false;
+    public bool is_moving = false;
     public int score = 0;
     public int lives = 5;
     public TextMeshProUGUI score_text;
@@ -28,7 +29,6 @@ public class Ball : MonoBehaviour
     public GameObject game_over_splash;
     public GameObject victory_splash;
     public bool game_over = false;
-
     float previous_velocity_y = 0f;
     public int brick_count;
 
@@ -39,6 +39,39 @@ public class Ball : MonoBehaviour
     public AudioSource game_over_sound;
     public AudioSource victory_sound;
 
+
+    // void GameOver()
+    // {
+    //     Debug.Log("game over");
+    //     //game_over_sound.Play();
+    //     game_over = true;
+
+    //     AgentBall agentBall = AgentBall.agentInstance;
+
+    //     if (agentBall != null)
+    //     {
+    //         if (score > agentBall.agent_score)
+    //         {
+    //             player_outperform_splash.SetActive(true);
+    //             victory_sound.Play();
+    //         }
+    //         else if (score < agentBall.agent_score)
+    //         {
+    //             ai_outperform_splash.SetActive(true);
+    //             game_over_sound.Play();
+    //         }
+    //         else
+    //         {
+    //             tie_splash.SetActive(true);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         game_over_splash.SetActive(true);
+    //     }
+
+    //     Time.timeScale = 0;
+    // }
 
     void GameOver()
     {
@@ -83,6 +116,8 @@ public class Ball : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        x_position = transform.position.x;
+        y_position = transform.position.y;
         // this references the rigid body component of this ball
         ball_rb = GetComponent<Rigidbody2D>();
 
@@ -102,6 +137,7 @@ public class Ball : MonoBehaviour
             // in the starting position
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                isGameStart = true;
                 // transform.translate will only apply discrete movements when
                 // space is held. Need a vector instead
                 // give it a little lateral movement so game start is interesting
@@ -139,6 +175,7 @@ public class Ball : MonoBehaviour
             // if the ball falls below the screen
             if (transform.position.y < min_Y)
             {
+                isGameStart = false;
                 if (lives <= 0)
                 {
                     GameOver();
@@ -146,6 +183,7 @@ public class Ball : MonoBehaviour
 
                 else
                 {
+                    isGameStart = false;
                     transform.position = Vector3.zero;
                     ball_rb.velocity = new Vector3(0, 0, 0);
                     is_moving = false;
@@ -188,6 +226,7 @@ public class Ball : MonoBehaviour
         }
         if (other.gameObject.CompareTag("Brick"))
         {
+            bricksHit = bricksHit + 1;
             brick_sound.Play();
         }
     }

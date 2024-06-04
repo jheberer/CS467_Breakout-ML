@@ -1,0 +1,65 @@
+{
+    "HitBall": {
+        "checkpoints": [
+            {
+                "steps": 496361,
+                "file_path": "results/test4/HitBall/HitBall-496361.onnx",
+                "reward": 4.163157789330733,
+                "creation_time": 1716839783.1023948,
+                "auxillary_file_paths": [
+                    "results/test4/HitBall/HitBall-496361.pt"
+                ]
+            },
+            {
+                "steps": 499983,
+                "file_path": "results/test4/HitBall/HitBall-499983.onnx",
+                "reward": 3.9592592451307507,
+                "creation_time": 1716839996.282618,
+                "auxillary_file_paths": [
+                    "results/test4/HitBall/HitBall-499983.pt"
+                ]
+            },
+            {
+                "steps": 500047,
+                "file_path": "results/test4/HitBall/HitBall-500047.onnx",
+                "reward": 3.9592592451307507,
+                "creation_time": 1716839996.323091,
+                "auxillary_file_paths": [
+                    "results/test4/HitBall/HitBall-500047.pt"
+                ]
+            },
+            {
+                "steps": 500047,
+                "file_path": "results/test4/HitBall/HitBall-500047.onnx",
+                "reward": null,
+                "creation_time": 1716840192.7497559,
+                "auxillary_file_paths": [
+                    "results/test4/HitBall/HitBall-500047.pt"
+                ]
+            },
+            {
+                "steps": 500047,
+                "file_path": "results/test4/HitBall/HitBall-500047.onnx",
+                "reward": null,
+                "creation_time": 1716840210.8645802,
+                "auxillary_file_paths": [
+                    "results/test4/HitBall/HitBall-500047.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 500047,
+            "file_path": "results/test4/HitBall.onnx",
+            "reward": null,
+            "creation_time": 1716840210.8645802,
+            "auxillary_file_paths": [
+                "results/test4/HitBall/HitBall-500047.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.11.0"
+    }
+}

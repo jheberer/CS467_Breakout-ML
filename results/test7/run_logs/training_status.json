@@ -1,0 +1,65 @@
+{
+    "HitBall": {
+        "checkpoints": [
+            {
+                "steps": 420013,
+                "file_path": "results/test7/HitBall/HitBall-420013.onnx",
+                "reward": 34.0531914893617,
+                "creation_time": 1717354530.8090482,
+                "auxillary_file_paths": [
+                    "results/test7/HitBall/HitBall-420013.pt"
+                ]
+            },
+            {
+                "steps": 422453,
+                "file_path": "results/test7/HitBall/HitBall-422453.onnx",
+                "reward": 44.49576271186441,
+                "creation_time": 1717357434.6205912,
+                "auxillary_file_paths": [
+                    "results/test7/HitBall/HitBall-422453.pt"
+                ]
+            },
+            {
+                "steps": 423870,
+                "file_path": "results/test7/HitBall/HitBall-423870.onnx",
+                "reward": 27.356382978723403,
+                "creation_time": 1717357529.712713,
+                "auxillary_file_paths": [
+                    "results/test7/HitBall/HitBall-423870.pt"
+                ]
+            },
+            {
+                "steps": 430169,
+                "file_path": "results/test7/HitBall/HitBall-430169.onnx",
+                "reward": 47.71965317919075,
+                "creation_time": 1717359008.615228,
+                "auxillary_file_paths": [
+                    "results/test7/HitBall/HitBall-430169.pt"
+                ]
+            },
+            {
+                "steps": 432766,
+                "file_path": "results/test7/HitBall/HitBall-432766.onnx",
+                "reward": 36.04220779220779,
+                "creation_time": 1717364891.121821,
+                "auxillary_file_paths": [
+                    "results/test7/HitBall/HitBall-432766.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 432766,
+            "file_path": "results/test7/HitBall.onnx",
+            "reward": 36.04220779220779,
+            "creation_time": 1717364891.121821,
+            "auxillary_file_paths": [
+                "results/test7/HitBall/HitBall-432766.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.11.0"
+    }
+}

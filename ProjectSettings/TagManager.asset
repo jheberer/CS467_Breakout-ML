@@ -7,6 +7,9 @@ TagManager:
   - Brick
   - Ball
   - Paddle
+  - AgentPaddle
+  - AgentBall
+  - AgentBrick
   layers:
   - Default
   - TransparentFX
