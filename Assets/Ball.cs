@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 
@@ -25,9 +26,17 @@ public class Ball : MonoBehaviour
     public int score = 0;
     public int lives = 5;
     public TextMeshProUGUI score_text;
+
+    public TextMeshProUGUI start_message;
     public GameObject[] lives_image;
     public GameObject game_over_splash;
     public GameObject victory_splash;
+
+    public GameObject player_outperform_splash;
+
+    public GameObject ai_outperform_splash;
+
+    public GameObject tie_splash;
     public bool game_over = false;
     float previous_velocity_y = 0f;
     public int brick_count;
@@ -40,48 +49,59 @@ public class Ball : MonoBehaviour
     public AudioSource victory_sound;
 
 
-    // void GameOver()
-    // {
-    //     Debug.Log("game over");
-    //     //game_over_sound.Play();
-    //     game_over = true;
-
-    //     AgentBall agentBall = AgentBall.agentInstance;
-
-    //     if (agentBall != null)
-    //     {
-    //         if (score > agentBall.agent_score)
-    //         {
-    //             player_outperform_splash.SetActive(true);
-    //             victory_sound.Play();
-    //         }
-    //         else if (score < agentBall.agent_score)
-    //         {
-    //             ai_outperform_splash.SetActive(true);
-    //             game_over_sound.Play();
-    //         }
-    //         else
-    //         {
-    //             tie_splash.SetActive(true);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         game_over_splash.SetActive(true);
-    //     }
-
-    //     Time.timeScale = 0;
-    // }
-
     void GameOver()
+    {
+        Debug.Log("game over");
+        game_over_sound.Play();
+        game_over = true;
+
+        if (SceneManager.GetActiveScene().name == "2PModeScene")
+        {
+            StartCoroutine(CheckAndDisplayOutcome());
+        }
+        else
+        {
+            game_over_splash.SetActive(true);
+            Time.timeScale = 0;
+        }
+    }
+
+    IEnumerator CheckAndDisplayOutcome()
+    {
+        AgentBall agentBall = AgentBall.instance;
+
+        while (!agentBall.game_over)
+        {
+            yield return null;
+        }
+
+        if (score > agentBall.score)
+        {
+            player_outperform_splash.SetActive(true);
+            victory_sound.Play();
+        }
+        else if (score < agentBall.score)
+        {
+            ai_outperform_splash.SetActive(true);
+            game_over_sound.Play();
+        }
+        else
+        {
+            tie_splash.SetActive(true);
+        }
+
+        Time.timeScale = 0;
+    }
+
+    /*void GameOver()
     {
         Debug.Log("game over");
         game_over_sound.Play();
         game_over_splash.SetActive(true);
         game_over = true;
         Time.timeScale = 0;
-    }
-    void Victory()
+    }*/
+    /*void Victory()
     {
         Debug.Log("victory");
         victory_sound.Play();
@@ -89,7 +109,7 @@ public class Ball : MonoBehaviour
         game_won = true;
         game_over = true;
         Time.timeScale = 0;
-    }
+    }*/
 
     // code citation
     // purpose of code: help make this game object class a singleton, so that
@@ -111,6 +131,11 @@ public class Ball : MonoBehaviour
     {
         GameObject[] bricks = GameObject.FindGameObjectsWithTag("Brick");
         brick_count = bricks.Length;
+
+        if (start_message != null)
+        {
+            start_message.gameObject.SetActive(true);
+        }
     }
 
     // Update is called once per frame
@@ -128,7 +153,7 @@ public class Ball : MonoBehaviour
         // win
         if (brick_count == 0)
         {
-            Victory();
+            GameOver();
         }
 
         if (!is_moving)
@@ -151,6 +176,12 @@ public class Ball : MonoBehaviour
 
                 ball_rb.velocity = initial_velocity;
                 is_moving = true;
+
+                // Hide the start message when the game starts
+                if (start_message != null)
+                {
+                    start_message.gameObject.SetActive(false);
+                }
             }
         }
 
