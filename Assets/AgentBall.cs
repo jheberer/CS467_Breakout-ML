@@ -190,19 +190,19 @@ public class AgentBall : MonoBehaviour
     {
         PauseGame();
         Debug.Log("game over in AgentBall");
-        game_over_sound.Play();
-        game_over_splash.SetActive(true);
+        //game_over_sound.Play();
+        //game_over_splash.SetActive(true);
         game_over = true;
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
     }
     void Victory()
     {
         Debug.Log("victory in AgentBall");
-        victory_sound.Play();
-        victory_splash.SetActive(true);
+        //victory_sound.Play();
+        //victory_splash.SetActive(true);
         game_won = true;
         game_over = true;
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
     }
 
     // code citation
