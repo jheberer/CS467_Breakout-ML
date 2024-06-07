@@ -101,7 +101,7 @@ public class Ball : MonoBehaviour
         game_over = true;
         Time.timeScale = 0;
     }*/
-    /*void Victory()
+    void Victory()
     {
         Debug.Log("victory");
         victory_sound.Play();
@@ -109,7 +109,7 @@ public class Ball : MonoBehaviour
         game_won = true;
         game_over = true;
         Time.timeScale = 0;
-    }*/
+    }
 
     // code citation
     // purpose of code: help make this game object class a singleton, so that
@@ -153,7 +153,14 @@ public class Ball : MonoBehaviour
         // win
         if (brick_count == 0)
         {
-            GameOver();
+            if (SceneManager.GetActiveScene().name == "2PModeScene")
+            {
+                GameOver();
+            }
+            else
+            {
+                Victory();
+            }
         }
 
         if (!is_moving)
